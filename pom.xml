@@ -1,39 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-pom.xml
-
-Purpose:
-- Project Object Model (POM) configuration for Maven projects.
-- Contains information about the project and configuration details used by Maven to build the project.
-- Defines dependencies, build plugins, profiles, and project metadata.
-
-Key concepts and theory:
-- Maven: A build automation tool primarily used for Java projects. It handles dependency management and standardizes the build process.
-- Dependencies: External libraries required by the project to compile and run. Maven automatically downloads them from a central repository (or specified repositories).
-- spring-boot-starter-parent: Provides sensible defaults for a Spring Boot application, including plugin configurations and dependency management for matching versions.
-- spring-boot-starter-*: "Starters" are a set of convenient dependency descriptors that you can include in your application. You get a one-stop shop for all the Spring and related technologies you need.
-
-Execution flow (during build):
-1. Maven reads pom.xml.
-2. It resolves dependencies by downloading missing JARs from repositories.
-3. It compiles source code, runs tests, and packages the application (e.g., into an executable JAR or WAR) using defined plugins.
-
-Detailed explanation of elements:
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- Declares the POM model version being used (always 4.0.0 currently) -->
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- Inherits defaults from Spring Boot parent POM (version management for standard dependencies) -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
-
-    <!-- Project coordinates -->
     <groupId>org.example</groupId>
     <artifactId>SpringBoot_web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -52,41 +26,30 @@ Detailed explanation of elements:
         <tag/>
         <url/>
     </scm>
-
-    <!-- Project specific properties -->
     <properties>
         <java.version>21</java.version>
     </properties>
-
-    <!-- List of external libraries this project depends on -->
     <dependencies>
-        <!-- Provides dependencies for building web, including RESTful, applications using Spring MVC. Uses Tomcat as the default embedded container. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
-
-        <!-- Tomcat Jasper: Essential for parsing and compiling JSP pages in embedded Tomcat container -->
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper</artifactId>
             <version>11.0.18</version>
-            <scope>compile</scope> <!-- compile scope means this dependency is available in all classpaths -->
+            <scope>compile</scope>
         </dependency>
 
-        <!-- Provides dependencies for testing Spring Boot applications with libraries that include JUnit, Hamcrest, and Mockito -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
-            <scope>test</scope> <!-- test scope means this dependency is only available on the test compilation and execution classpaths -->
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <!-- Configures the build process and plugins -->
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin: Packages the project into an executable jar or war file and provides a goal to run the app -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

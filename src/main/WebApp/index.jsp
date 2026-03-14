@@ -2,36 +2,45 @@
 index.jsp
 
 Purpose:
-- Acts as a view template that is rendered and returned to the client (browser) by the server.
-- Used in traditional Spring MVC/Servlet applications to combine HTML presentation with dynamic Java code.
+- Acts as the main view template for the home page.
+- It displays a welcome message and a form to collect two numbers from the user.
 
 Key concepts and theory:
-- JSP (JavaServer Pages): A technology that helps software developers create dynamically generated web pages based on HTML, XML, or other document types.
-- A JSP file is essentially an HTML page with interspersed Java code.
-- At runtime, the Servlet container (e.g., Tomcat) translates the JSP into a Java Servlet, compiles it, and executes it to generate the final HTML output.
+- JSP (JavaServer Pages): A technology that helps software developers create dynamically generated web pages based on HTML.
+- HTML Form: The <form> element is used to create an HTML form for user input.
+- Form Action: The 'action="add"' attribute specifies that when the form is submitted, the data should be sent to the "/add" URL on the server.
+- Form Input: The <input> elements are used to create interactive controls for web-based forms in order to accept data from the user.
+- 'name' attribute: The 'name' attribute of the input fields ("num1", "num2") is crucial. It becomes the key for the parameter sent to the server.
 
 Execution flow:
-1. The client sends an HTTP request mapped to the controller method (e.g., '/').
-2. The controller returns a logical view name or directly points to this file ('index.jsp').
-3. The view resolver locates 'index.jsp'.
-4. If it's the first time this page is requested, the container translates it into a Servlet class and compiles it.
-5. The container executes the Servlet's service method, which generates HTML text.
-6. The HTML text is sent as an HTTP response to the client.
-
-Detailed explanation of elements:
+1. The user navigates to the root URL ("/").
+2. The HomeController's home() method returns "index.jsp".
+3. The server renders this JSP file into HTML and sends it to the user's browser.
+4. The user sees the form, enters two numbers, and clicks the "Add" button.
+5. The browser creates a new request to the URL specified in the form's action attribute: /add?num1=<value1>&num2=<value2>
+6. This request is then handled by the add() method in the HomeController.
 --%>
 
-<%--
-Page Directive: <%@page ... %>
-- Used to provide instructions to the JSP container that apply to the entire JSP page.
-- 'language="java"': Indicates that the scripting language used in the JSP page is Java.
-- Other common attributes include 'contentType' (to specify the MIME type), 'import' (to import Java packages/classes), etc.
---%>
 <%@page language="java" %>
-<!-- this tag means we have some java code also and this is of type page-->
+<!-- This is a page directive. 'language="java"' tells the JSP container that the scripting language is Java. -->
 
 <html>
+<link rel="stylesheet" type="text/css" href="style.css" />
    <body>
       <h2> Hello world!</h2>
+
+    <!-- This form will send a GET request to the 'add' URL when submitted. -->
+    <form action="add">
+       <label for="num1">Number 1:</label>
+       <!-- The 'name' attribute is used by the server to identify the parameter. -->
+       <input type="text" id="num1" name="num1"><br><br>
+
+       <label for="num2">Number 2:</label>
+       <input type="text" id="num2" name="num2"><br><br>
+
+       <!-- The submit button triggers the form action. -->
+       <input type="submit" value="Add">
+    </form>
+
    </body>
 </html>

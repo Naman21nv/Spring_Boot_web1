@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam; // Import for @RequestParam
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * HomeController
@@ -44,40 +45,47 @@ public class HomeController {
 
     /**
      * Handles the "/add" request, typically submitted from an HTML form.
-     * This method demonstrates how to receive parameters and pass data to a JSP using Spring's Model.
+     * This method demonstrates how to receive parameters and pass data to a JSP using Spring's ModelAndView.
      *
      * <p>Theory and Flow:
      * 1. The form in `index.jsp` submits data to the "/add" URL (e.g., `/add?num1=10&num2=20`).
-     * 2. Spring automatically binds the request parameters "num1" and "num2" to the `int num1` and `int num2` method arguments.
-     *    - Alternative (`@RequestParam`): If the parameter name in the URL differs from the method argument name (e.g., `num1` in URL, `myNum1` in method), you would use `@RequestParam("num1") int myNum1`.
-     *      Example: `public String add(@RequestParam("num1") int num, @RequestParam("num2") int num209, Model model)`
+     * 2. Spring automatically binds the request parameters "num1" and "num2" to the method arguments.
+     *    - @RequestParam: We use this to tell Spring explicitly which URL parameter maps to which variable.
+     *    - 'defaultValue="0"': This is CRITICAL. If the user submits the form with empty boxes, the URL will be `/add?num1=&num2=`.
+     *      Without `defaultValue`, Spring tries to parse an empty string "" into an `int`, fails with a NumberFormatException, and throws a 404 error.
+     *      `defaultValue="0"` tells Spring: "If the parameter is missing or empty, use the integer 0 instead." This prevents the 404 crash.
      * 3. The method performs the addition.
-     * 4. `Model` object: This is a Spring mechanism to pass data from the controller to the view.
-     *    - `model.addAttribute("result", c)`: Stores the calculated sum `c` under the attribute name "result". This "result" will be accessible in the `return.jsp` file.
-     *    - Contrast with `HttpSession`: While `HttpSession` (as used previously) can also store data, `Model` is preferred for passing data to the *current* view, as it's designed for request-scoped attributes and is more testable. `HttpSession` is for data that needs to persist across multiple requests for a specific user.
-     * 5. Returns the logical view name "return".
-     * 6. The View Resolver (configured in `application.properties`) locates the physical file at `/view/return.jsp`.
+     * 4. `ModelAndView` object: This combines both the Data (Model) we want to pass to the view, AND the Name of the View itself into one object.
+     *    - `mv.addObject("result", c)`: Stores the calculated sum `c` under the attribute name "result". This "result" will be accessible in the JSP file.
+     *    - `mv.setViewName("return")`: Sets the logical name of the view to render. NOTE: Changed back to "return" to match your return.jsp file.
+     * 5. Returns the `ModelAndView` object.
+     * 6. The View Resolver locates the physical file at `/view/return.jsp`.
      *
-     * @param num1 The first number, automatically bound from the request parameter "num1".
-     * @param num2 The second number, automatically bound from the request parameter "num2".
-     * @param model The Spring Model object, used to pass data to the view.
-     * @return The logical view name "return" to render.
+     * @param num1 The first number, bound from the "num1" request parameter. Defaults to 0 if missing/empty.
+     * @param num2 The second number, bound from the "num2" request parameter. Defaults to 0 if missing/empty.
+     * @param mv The Spring ModelAndView object, injected by Spring.
+     * @return The populated ModelAndView object containing the result and the view name.
      */
     @RequestMapping("add")
-    public String add(@RequestParam("num1") int num1, @RequestParam("num2") int num2 , Model model){
-        // The @RequestParam annotation is explicitly used here for clarity,
-        // though Spring can often infer it if parameter names match request parameter names.
-        // It ensures that the 'num1' and 'num2' from the URL are correctly mapped to these integer variables.
+    public ModelAndView add(
+            @RequestParam(value = "num1", defaultValue = "0") int num1, 
+            @RequestParam(value = "num2", defaultValue = "0") int num2, 
+            ModelAndView mv){
+
+        // The @RequestParam annotation now includes defaultValue="0".
+        // This is what fixes the 404 error when empty values are submitted.
 
         int c = num1 + num2; // Perform the addition.
 
-        // Add the result to the Model. This makes the 'c' value available to the JSP
+        // Add the result to the ModelAndView. This makes the 'c' value available to the JSP
         // under the name "result".
-        model.addAttribute("result" , c);
-
-        // Return the logical view name "return".
-        // The View Resolver will combine this with the prefix and suffix to find "return.jsp".
-        return "return";
+        mv.addObject("result", c); 
+        
+        // Set the logical view name. It must match the name of your JSP file in the /view/ folder.
+        // I changed this from "result" back to "return" because your file is named return.jsp
+        mv.setViewName("return"); 
+        
+        return mv;
     }
 
 }

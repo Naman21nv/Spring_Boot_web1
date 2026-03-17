@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam; // Import for @RequestParam
 import org.springframework.web.servlet.ModelAndView;
@@ -26,6 +27,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
+
+
     /**
      * Handles the root ("/") request.
      *
@@ -41,6 +44,29 @@ public class HomeController {
     public String home(){
         System.out.println("home method called"); // Helpful for debugging to see when the method is hit.
         return "index"; // Returns the logical view name "index".
+    }
+    
+    /**
+     * @ModelAttribute at the Method Level
+     *
+     * <p>Theory and Flow:
+     * - When `@ModelAttribute` is placed on a METHOD (not a parameter), it means:
+     *   "Execute this method BEFORE any @RequestMapping method in this controller, and add its return value to the Model."
+     * 
+     * - In this specific case:
+     *   1. A request comes in (e.g., to "/" or "/add" or "/addAlien").
+     *   2. BEFORE executing `home()`, `add()`, or `Alien_add()`, Spring executes `courseName()`.
+     *   3. It takes the return value ("Java") and automatically adds it to the Model using the key specified in the annotation ("course").
+     *   4. So, behind the scenes, it's doing something like: `model.addAttribute("course", "Java");`
+     * 
+     * <p>Why use this?
+     * - Use this when you have common data that needs to be displayed on *every single view* returned by this controller.
+     * - For example, if every page has a header that displays the course name, instead of writing `model.addAttribute("course", "Java")` inside `home()`, `add()`, and `addAlien()`, you write it once here.
+     * - In any JSP returned by this controller, you can now write `${course}` and it will print "Java".
+     */
+    @ModelAttribute("course")
+    public String courseName(){
+        return "Java";
     }
 
     /**
@@ -90,18 +116,13 @@ public class HomeController {
     }
 
     @RequestMapping("addAlien")
-    public ModelAndView Alien_add(
-            int aid , String aname , ModelAndView mv
+    public String Alien_add(
+           Alien alien
     ){
 
-        Alien alien=new Alien();
-        alien.setAid(aid);
-        alien.setAname(aname);
+        System.out.println(alien);
 
-        mv.addObject("ALien_added_obj",alien );
-        mv.setViewName("return");
-
-        return mv;
+        return "return";
     }
     /**
      * here i am not using @RequestParam and still my code works becoz its optional

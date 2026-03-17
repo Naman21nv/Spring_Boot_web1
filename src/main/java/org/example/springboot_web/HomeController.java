@@ -79,7 +79,8 @@ public class HomeController {
 
         // Add the result to the ModelAndView. This makes the 'c' value available to the JSP
         // under the name "result".
-        mv.addObject("result", c); 
+        mv.addObject("result", c);
+
         
         // Set the logical view name. It must match the name of your JSP file in the /view/ folder.
         // I changed this from "result" back to "return" because your file is named return.jsp
@@ -87,5 +88,24 @@ public class HomeController {
         
         return mv;
     }
+
+    @RequestMapping("addAlien")
+    public ModelAndView Alien_add(
+            int aid , String aname , ModelAndView mv
+    ){
+
+        Alien alien=new Alien();
+        alien.setAid(aid);
+        alien.setAname(aname);
+
+        mv.addObject("ALien_added_obj",alien );
+        mv.setViewName("return");
+
+        return mv;
+    }
+    /**
+     * here i am not using @RequestParam and still my code works becoz its optional
+     * and also
+     */
 
 }
